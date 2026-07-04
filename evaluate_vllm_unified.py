@@ -1766,125 +1766,6 @@ def load_centerbias_from_pkl(
 
 
 # =============================================================================
-# Centerbias Alpha Tuning
-# =============================================================================
-
-ALPHA_CANDIDATES = [0.0, 0.1, 0.5, 1.0, 2.0, 5.0, 6.0, 7.5, 9.0, 10.0]
-
-
-def tune_centerbias_alpha_grid(
-    saliency_computer: SaliencyComputer,
-    tune_samples: List[Dict],
-    images_dir: str,
-    shot_pool: List[Dict],
-    shot_selector: ShotSelector,
-    num_shots: int,
-    shot_strategy: str,
-    pkl_dir: Optional[str],
-    default_center_bias: np.ndarray,
-    use_data_centerbias: bool,
-    resolution: int,
-    batch_size: int,
-    alpha_candidates: List[float] = ALPHA_CANDIDATES,
-) -> float:
-    """Tune centerbias alpha using full grid computation (for grid metric mode)."""
-    import time as _time
-
-    print(f"\n{'='*70}")
-    print("Tuning centerbias alpha (grid mode)")
-    print(f"{'='*70}")
-    print(f"  Tuning samples: {len(tune_samples)}")
-    print(f"  Alpha candidates: {alpha_candidates}")
-    tune_start = _time.time()
-
-    fixation_data = []
-    samples_processed = 0
-
-    for idx, sample in enumerate(tune_samples):
-        image_path = os.path.join(images_dir, sample['images'][0])
-
-        try:
-            image = Image.open(image_path).convert('RGB')
-        except Exception as e:
-            print(f"  [{idx+1}/{len(tune_samples)}] SKIP {sample['images'][0]}: {e}")
-            continue
-
-        conv = sample['conversations']
-        text_prompt = conv[0]['value'].replace("<image>", "").strip()
-        gt_fixations = parse_scanpath_reduced(conv[1]['value'])
-
-        if len(gt_fixations) < 2:
-            continue
-
-        if use_data_centerbias and pkl_dir:
-            cb, _ = load_centerbias_from_pkl(sample['images'][0], pkl_dir, resolution)
-            if cb is None:
-                cb = default_center_bias
-        else:
-            cb = default_center_bias
-
-        selected_shots = shot_selector.select(
-            shot_pool, num_shots, shot_strategy, test_sample=sample
-        )
-        shot_examples = prepare_shot_examples(selected_shots, images_dir)
-
-        n_transitions = len(gt_fixations) - 1
-        print(f"  [{idx+1}/{len(tune_samples)}] {sample['images'][0]}: "
-              f"{len(gt_fixations)} fixations ({n_transitions} transitions)",
-              flush=True)
-
-        all_grids = saliency_computer.compute_all_fixation_distributions(
-            image, text_prompt, shot_examples, gt_fixations, resolution, batch_size
-        )
-
-        for i, model_grid in enumerate(all_grids):
-            target = gt_fixations[i + 1]
-            fixation_data.append({
-                'model_grid': model_grid,
-                'centerbias': cb,
-                'target': target,
-            })
-
-        samples_processed += 1
-
-    if not fixation_data:
-        print("  No valid tuning data, using alpha=0.0")
-        return 0.0
-
-    print(f"\n  Collected {len(fixation_data)} transitions from {samples_processed} samples")
-
-    for fd in fixation_data:
-        fd['model_log_prob'] = fd['model_grid'] - logsumexp(fd['model_grid'])
-
-    best_alpha = 0.0
-    best_mean_ll = -np.inf
-
-    for alpha in alpha_candidates:
-        lls = []
-        for fd in fixation_data:
-            combined = fd['model_log_prob'] + alpha * fd['centerbias']
-            combined = combined - logsumexp(combined)
-            x, y = fd['target']
-            x_idx = min(resolution - 1, max(0, x))
-            y_idx = min(resolution - 1, max(0, y))
-            lls.append(float(combined[y_idx, x_idx]))
-
-        mean_ll = np.mean(lls)
-        marker = " <-- best" if mean_ll > best_mean_ll else ""
-        print(f"    alpha={alpha:5.1f}: mean LL = {mean_ll:.4f}{marker}")
-
-        if mean_ll > best_mean_ll:
-            best_mean_ll = mean_ll
-            best_alpha = alpha
-
-    total_elapsed = _time.time() - tune_start
-    print(f"\n  Best alpha: {best_alpha} (mean LL = {best_mean_ll:.4f})")
-    print(f"  Total tuning time: {total_elapsed:.1f}s")
-    print(f"{'='*70}\n")
-    return best_alpha
-
-
-# =============================================================================
 # Metrics (for grid mode)
 # =============================================================================
 
@@ -2598,12 +2479,8 @@ def main():
     # Centerbias
     parser.add_argument('--pkl-dir', type=str, default='/mnt/lustre/work/bethge/bkr710/projects/deepgaze-iccv/tmp_datasets_withsubj',
                         help='Directory with pkl files for data-driven centerbias')
-    parser.add_argument('--tune-centerbias', action='store_true',
-                        help='Tune centerbias alpha via grid search')
     parser.add_argument('--centerbias-alpha', type=float, default=None,
-                        help='Manually set centerbias alpha (skip tuning)')
-    parser.add_argument('--tune-num-samples', type=int, default=20,
-                        help='Number of samples for centerbias alpha tuning')
+                        help='Centerbias augmentation weight (0 = pure model)')
 
     # Infrastructure
     parser.add_argument('--max-samples', type=int, default=None)
@@ -2824,34 +2701,8 @@ def main():
     if args.centerbias_alpha is not None:
         centerbias_alpha = args.centerbias_alpha
         print(f"Using manual centerbias alpha: {centerbias_alpha}")
-    elif args.tune_centerbias:
-        if shot_pool:
-            tune_pool = shot_pool
-        else:
-            tune_pool = val_data
-        tune_rng = random.Random(args.seed)
-        tune_samples = tune_rng.sample(tune_pool, min(args.tune_num_samples, len(tune_pool)))
-
-        if args.metric_mode == 'grid':
-            centerbias_alpha = tune_centerbias_alpha_grid(
-                saliency_computer=saliency_computer,
-                tune_samples=tune_samples,
-                images_dir=args.images_dir,
-                shot_pool=shot_pool,
-                shot_selector=shot_selector,
-                num_shots=args.num_shots,
-                shot_strategy=args.shot_strategy,
-                pkl_dir=args.pkl_dir,
-                default_center_bias=default_center_bias,
-                use_data_centerbias=use_data_centerbias,
-                resolution=args.resolution,
-                batch_size=args.batch_size,
-            )
-        else:
-            print("Centerbias tuning is only supported in grid mode; "
-                  "skipping tuning (centerbias_alpha=0.0).")
     else:
-        print("Centerbias augmentation: disabled (use --tune-centerbias or --centerbias-alpha)")
+        print("Centerbias augmentation: disabled (use --centerbias-alpha to enable)")
 
     # =========================================================================
     # Verify-only mode
