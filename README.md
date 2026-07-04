@@ -40,12 +40,6 @@ bundled here.
   baseline for the Information-Gain metric (only the `centerbias` array is
   retained; raw human-fixation and image arrays have been stripped).
 
-## What is NOT included
-
-- The full training/validation datasets (only a 5-image sample is bundled).
-- The base-model weights. `OpenGVLab/InternVL3_5-8B-HF` (~16GB) is downloaded
-  from HuggingFace on first run and the LoRA adapter is merged locally.
-
 ## Directory layout
 
 ```
