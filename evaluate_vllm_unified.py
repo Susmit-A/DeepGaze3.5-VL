@@ -2,31 +2,21 @@
 """
 Unified vLLM evaluation for scanpath prediction.
 
-Consolidates grid-based and assume-normalized evaluation modes
-into a single script. Supports base models, LoRA-finetuned models (merged),
-and QLoRA models (native LoRA).
+Evaluates a LoRA-finetuned model (merged at load time) on scanpath prediction.
 
 Metric modes:
-  - grid: Full 100x100 probability grid via digit-by-digit logprob probing.
-      Computes IG, AUC, NSS, LL.  (~1111 queries per transition)
-  - assume_normalized: Scores only GT coordinates, assumes Z≈1 (or uses fixed
-      --log-z).  Computes IG, LL.  Fastest mode.
+  - fast: Scores the ground-truth coordinates via digit-by-digit probing with
+      per-digit normalization. Computes IG and LL. Default.
+  - grid: Builds the full 100x100 next-fixation probability grid per transition.
+      Computes IG, AUC, NSS, LL. Slower.
 
 Usage:
-    # Zero-shot grid evaluation (finetuned model)
     python evaluate_vllm_unified.py \
         --base-model OpenGVLab/InternVL3_5-8B-HF \
-        --adapter-path outputs/checkpoint-1000 \
+        --adapter-path model/combined_adapter \
         --val-json /path/to/val.json \
         --images-dir /path/to/images \
-        --metric-mode grid --num-shots 0
-
-    # Fast assume-normalized evaluation
-    python evaluate_vllm_unified.py \
-        --base-model model_path \
-        --val-json /path/to/val.json \
-        --images-dir /path/to/images \
-        --assume-normalized --log-z -0.04
+        --metric-mode fast
 """
 
 import argparse
@@ -678,7 +668,7 @@ class SaliencyComputer:
 
     Supports two evaluation modes:
     - Grid mode: Full 100x100 probability grid via 4-phase digit-by-digit probing
-    - MC/assume_normalized mode: Score specific coordinates via digit-by-digit probing
+    - Fast mode: Score specific coordinates via digit-by-digit probing
     """
 
     def __init__(
@@ -1191,7 +1181,7 @@ class SaliencyComputer:
         )[0]
 
     # =========================================================================
-    # MC/assume_normalized mode: score specific coordinates
+    # Fast mode: score specific coordinates
     # =========================================================================
 
     def generate_model_samples(
@@ -2467,14 +2457,10 @@ def main():
                         help='Strategy for selecting few-shot examples')
 
     # Metric mode
-    parser.add_argument('--metric-mode', type=str, default='assume_normalized',
-                        choices=['grid', 'assume_normalized'],
-                        help='assume_normalized (default, fast IG/LL with normalize-digits) '
-                             'or grid (full 100x100)')
-    parser.add_argument('--assume-normalized', action='store_true',
-                        help='Shorthand for --metric-mode assume_normalized')
-    parser.add_argument('--log-z', type=float, default=None,
-                        help='Fixed log Z value (implies assume_normalized mode)')
+    parser.add_argument('--metric-mode', type=str, default='fast',
+                        choices=['grid', 'fast'],
+                        help='fast (default): per-fixation IG/LL via digit-by-digit '
+                             'probing. grid: full 100x100 grid (adds AUC/NSS, slower).')
 
     # Centerbias
     parser.add_argument('--pkl-dir', type=str, default='/mnt/lustre/work/bethge/bkr710/projects/deepgaze-iccv/tmp_datasets_withsubj',
@@ -2519,24 +2505,10 @@ def main():
                         help='Force temporal mode (4-digit onset timestamps)')
     parser.add_argument('--durations', action='store_true',
                         help='Force durations mode (3-digit fixation durations)')
-    parser.add_argument('--normalize-digits', action='store_true', default=True,
-                        help='Normalize digit logprobs at each phase (condition on next token being a digit). '
-                             'Makes log Z ~ 0. Enabled by default.')
-    parser.add_argument('--no-normalize-digits', dest='normalize_digits', action='store_false',
-                        help='Disable digit logprob normalization.')
-
     args = parser.parse_args()
 
-    # Shorthands
-    if args.assume_normalized:
-        args.metric_mode = 'assume_normalized'
-    if args.log_z is not None:
-        args.metric_mode = 'assume_normalized'
-    if args.normalize_digits:
-        if args.log_z is not None and args.log_z != 0.0:
-            print(f"WARNING: --normalize-digits makes --log-z redundant. "
-                  f"Ignoring --log-z {args.log_z} and using log_z=0.")
-        args.log_z = 0.0
+    args.normalize_digits = True
+    args.log_z = 0.0
 
     # Validate
     if args.temporal and args.durations:
@@ -2607,13 +2579,6 @@ def main():
     print(f"Num shots: {args.num_shots}")
     print(f"Shot strategy: {args.shot_strategy}")
     print(f"Metric mode: {args.metric_mode}")
-    if args.metric_mode == 'assume_normalized':
-        if args.log_z is not None:
-            print(f"  (using fixed log Z = {args.log_z})")
-        else:
-            print("  (assuming Z~1, log Z=0)")
-    if args.normalize_digits:
-        print("Digit normalization: ENABLED (log Z should be ~ 0)")
     print(f"Val JSON: {args.val_json}")
     print(f"Images dir: {args.images_dir}")
     print(f"Max model len: {args.max_model_len}")
@@ -2944,9 +2909,9 @@ def main():
                         )
 
             # =================================================================
-            # ASSUME_NORMALIZED MODE
+            # FAST MODE
             # =================================================================
-            elif args.metric_mode == 'assume_normalized':
+            elif args.metric_mode == 'fast':
                 xy_sep = saliency_computer._xy_separator or ", "
 
                 for (idx, sample, text_prompt, gt_fixations, gt_temporal, gt_durations), result in zip(

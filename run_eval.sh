@@ -12,8 +12,7 @@ python evaluate_vllm_unified.py \
     --images-dir data \
     --pkl-dir data/centerbias \
     --output-dir eval_output \
-    --metric-mode assume_normalized \
-    --normalize-digits \
+    --metric-mode fast \
     --batch-size 64 \
     --max-num-seqs 32 \
     --max-model-len 4096 \

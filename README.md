@@ -77,7 +77,7 @@ python evaluate_vllm_unified.py \
     --images-dir data \
     --pkl-dir data/centerbias \
     --output-dir eval_output \
-    --metric-mode assume_normalized --normalize-digits \
+    --metric-mode fast \
     --batch-size 64 --max-num-seqs 32 --max-model-len 4096 \
     --gpu-memory-utilization 0.90 \
     --skip-viz
@@ -91,25 +91,22 @@ A GPU is required.
 
 Two scoring modes are available via `--metric-mode`:
 
-- **`assume_normalized`** (default, fast) — scores only the ground-truth
-  coordinate of each fixation by probing its digits, assuming the per-digit
-  distributions are already normalised (`log Z = 0`). Use together with
-  `--normalize-digits`. Reports per-fixation Information Gain (IG) and
-  log-likelihood (LL). Recommended default.
+- **`fast`** (default) — scores the ground-truth coordinate of each fixation by
+  probing its digits with per-digit normalisation. Reports per-fixation
+  Information Gain (IG) and log-likelihood (LL). Recommended.
 - **`grid`** — builds the full 100×100 next-fixation probability grid for every
   transition and normalises over it. Slower (many more forward passes) but also
   yields AUC and NSS alongside IG/LL, and can dump the grids with `--save-grids`.
 
-Both modes probe the fixation coordinates digit-by-digit; `--normalize-digits`
-renormalises each digit distribution over the ten digit tokens (0–9) so that
-probability mass on non-digit tokens does not distort the score.
+Both modes probe the fixation coordinates digit-by-digit; the digit distribution
+is renormalised over the ten digit tokens (0–9) so that probability mass on
+non-digit tokens does not distort the score.
 
 ### Key options
 
 | Flag | Meaning |
 |------|---------|
-| `--metric-mode {assume_normalized,grid}` | Scoring mode (default `assume_normalized`). |
-| `--normalize-digits` / `--no-normalize-digits` | Renormalise each digit distribution over 0–9 (on by default). |
+| `--metric-mode {fast,grid}` | Scoring mode (default `fast`). |
 | `--base-model` | HuggingFace base model (`OpenGVLab/InternVL3_5-8B-HF`). |
 | `--adapter-path` | LoRA adapter directory (merged into `*_merged/` on first use). |
 | `--val-json` | Evaluation set in LlamaFactory format (see below). |
