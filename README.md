@@ -148,15 +148,3 @@ image and a human/assistant turn pair:
   `data/centerbias/MIT/0987.pkl`). Each pickle is a dict
   `{"centerbias": <2-D log-density array>}`. If a prior is missing, a synthetic
   Gaussian center bias is used instead.
-
-### Output
-
-Results are written to `<output-dir>/unified_<mode>_0shot_<timestamp>.json`. The
-`results` list has one entry per evaluated sample, with the ground-truth
-fixations and per-fixation scores:
-
-- `lp_mean_ig`, `lp_fixation_igs` — mean and per-fixation Information Gain (bits).
-- `lp_mean_ll`, `lp_fixation_lls` — mean and per-fixation log-likelihood.
-- In `grid` mode, AUC and NSS are additionally reported per fixation.
-
-Aggregate IG/LL across the set are printed to stdout at the end of the run.
