@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
-# Evaluate the InternVL3.5-8B combined scanpath model on the 5 bundled MIT sample images.
-# Requires 1 GPU. On first run the base model (~16GB) is downloaded from HuggingFace and
-# the LoRA adapter is merged into model/combined_adapter_merged/ (git-ignored).
+# Evaluate the free-viewing scanpath model on the 5 bundled MIT sample images.
+# Requires 1 GPU. On first run the base model (~16GB) is downloaded from HuggingFace
+# and the LoRA adapter is merged into model/combined_adapter_merged/.
 set -euo pipefail
 cd "$(dirname "$0")"
 

@@ -7,7 +7,7 @@ predict human free-viewing scanpaths as coordinate sequences on a 100x100 grid.
 Given an image, the model emits a sequence of fixation coordinates that
 approximate where a human observer would look. This is the **combined** model:
 it was trained jointly on five eye-tracking datasets (MIT, CAT, COCO, Daemons,
-Figrim). The weights bundled here are the best checkpoint, training step 13000.
+Figrim). The weights bundled here are the best checkpoint.
 
 ## Models
 
@@ -24,22 +24,6 @@ Choose which one to load with `--adapter-path`. The bundled 5-image sample and
 COCO-Search18-style inputs (a target category in the prompt), which are not
 bundled here.
 
-## What is included
-
-- `evaluate_vllm_unified.py` — the evaluation / scoring script.
-- `configs/internvl3_5_8b_combined.yaml`, `configs/internvl3_5_8b_visual_search.yaml`
-  — the LoRA SFT training configurations for the two models.
-- `model/combined_adapter/` — the inference-only free-viewing LoRA adapter
-  (rank 32; weights + tokenizer / processor config).
-- `model/visual_search_adapter/` — the inference-only visual-search LoRA
-  adapter (rank 8, COCO-Search18).
-- `data/sample_MIT.json` — 75 validation entries (all subjects) for 5 MIT
-  sample images.
-- `data/images/` — the 5 sample images (`MIT_0985.jpg` .. `MIT_0989.jpg`).
-- `data/centerbias/MIT/` — minimal per-image center-bias priors used as the
-  baseline for the Information-Gain metric (only the `centerbias` array is
-  retained; raw human-fixation and image arrays have been stripped).
-
 ## Directory layout
 
 ```
@@ -48,26 +32,23 @@ internvl3_5_8b_combined_release/
 ├── LICENSE
 ├── requirements.txt
 ├── run_eval.sh
-├── .gitignore
-├── evaluate_vllm_unified.py
+├── evaluate_vllm_unified.py               # evaluation / scoring script
 ├── configs/
-│   ├── internvl3_5_8b_combined.yaml
-│   └── internvl3_5_8b_visual_search.yaml
+│   ├── internvl3_5_8b_combined.yaml        # free-viewing LoRA SFT config
+│   └── internvl3_5_8b_visual_search.yaml   # visual-search LoRA SFT config
 ├── model/
 │   ├── combined_adapter/          # free-viewing scanpath (rank 32)
 │   └── visual_search_adapter/     # COCO-Search18 visual search (rank 8)
-├── data/
-│   ├── sample_MIT.json            # 75 entries for the 5 sample images
-│   ├── images/                    # MIT_0985.jpg .. MIT_0989.jpg
-│   └── centerbias/
-│       └── MIT/                   # 0985.pkl .. 0989.pkl (centerbias only)
-└── eval_output/                   # created at runtime (git-ignored)
+└── data/
+    ├── sample_MIT.json            # 75 entries for the 5 sample MIT images
+    ├── images/                    # MIT_0985.jpg .. MIT_0989.jpg
+    └── centerbias/
+        └── MIT/                   # per-image center-bias priors (IG baseline)
 ```
 
 ## Quick start
 
-1. Create an environment from the pinned requirements, or simply reuse the
-   validated `vllm` conda env:
+1. Install the dependencies:
 
    ```bash
    pip install -r requirements.txt
@@ -75,7 +56,7 @@ internvl3_5_8b_combined_release/
 
 2. Run the evaluation (needs 1 GPU). The first run downloads the base model
    from HuggingFace and merges the LoRA adapter into
-   `model/combined_adapter_merged/` (git-ignored):
+   `model/combined_adapter_merged/`:
 
    ```bash
    bash run_eval.sh
@@ -119,7 +100,9 @@ Two scoring modes are available via `--metric-mode`:
   transition and normalises over it. Slower (many more forward passes) but also
   yields AUC and NSS alongside IG/LL, and can dump the grids with `--save-grids`.
 
-For this model the two modes yield essentially identical IG/LL.
+Both modes probe the fixation coordinates digit-by-digit; `--normalize-digits`
+renormalises each digit distribution over the ten digit tokens (0–9) so that
+probability mass on non-digit tokens does not distort the score.
 
 ### Key options
 
@@ -180,19 +163,3 @@ fixations and per-fixation scores:
 - In `grid` mode, AUC and NSS are additionally reported per fixation.
 
 Aggregate IG/LL across the set are printed to stdout at the end of the run.
-
-## Metric note
-
-The default evaluation runs with `--metric-mode assume_normalized` and
-`--normalize-digits`. This computes a fast per-fixation Information Gain (IG) /
-log-likelihood. IG is reported in **bits per fixation** relative to a per-image
-center-bias baseline (the priors in `data/centerbias/`). Positive IG means the
-model predicts fixations better than the center-bias prior alone.
-
-## How scoring works
-
-Predicted fixation coordinates are probed digit-by-digit from the model's
-output distribution. With `--normalize-digits`, each digit's distribution is
-renormalized over the 10 digit tokens (0-9) before the coordinate
-log-likelihood is accumulated, so probability mass on non-digit tokens does not
-distort the score.

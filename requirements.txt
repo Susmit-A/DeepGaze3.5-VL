@@ -1,6 +1,4 @@
-# These pins mirror the validated "vllm" conda environment used to train and
-# evaluate this model. Python 3.12.11.
-# Install into a fresh environment, or simply reuse the existing "vllm" env.
+# Pinned dependencies. Tested with Python 3.12.
 vllm==0.11.2
 transformers==4.57.6
 peft==0.18.1
