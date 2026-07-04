@@ -9,14 +9,31 @@ approximate where a human observer would look. This is the **combined** model:
 it was trained jointly on five eye-tracking datasets (MIT, CAT, COCO, Daemons,
 Figrim). The weights bundled here are the best checkpoint, training step 13000.
 
+## Models
+
+Two LoRA adapters are bundled, both on top of `OpenGVLab/InternVL3_5-8B-HF`:
+
+- **`model/combined_adapter/`** — free-viewing scanpath prediction (rank 32),
+  trained jointly on MIT, CAT, COCO, Daemons and Figrim. Used by `run_eval.sh`.
+- **`model/visual_search_adapter/`** — goal-directed **visual search** (rank 8),
+  trained on COCO-Search18 (target-present and target-absent trials); given a
+  search target it predicts the search scanpath.
+
+Choose which one to load with `--adapter-path`. The bundled 5-image sample and
+`run_eval.sh` target the free-viewing model; the visual-search model expects
+COCO-Search18-style inputs (a target category in the prompt), which are not
+bundled here.
+
 ## What is included
 
 - `evaluate_vllm_unified.py` — the evaluation / scoring script.
-- `configs/internvl3_5_8b_combined.yaml` — the LoRA SFT training configuration
-  (rank 32, alpha 64, 5-dataset joint training).
-- `model/combined_adapter/` — the inference-only LoRA adapter (weights +
-  tokenizer / processor config). Training-only files (optimizer, scheduler, RNG
-  state, trainer state) are intentionally excluded.
+- `configs/internvl3_5_8b_combined.yaml`, `configs/internvl3_5_8b_visual_search.yaml`
+  — the LoRA SFT training configurations for the two models.
+- `model/combined_adapter/` — the inference-only free-viewing LoRA adapter
+  (rank 32; weights + tokenizer / processor config). Training-only files
+  (optimizer, scheduler, RNG state, trainer state) are intentionally excluded.
+- `model/visual_search_adapter/` — the inference-only visual-search LoRA
+  adapter (rank 8, COCO-Search18).
 - `data/sample_MIT.json` — 75 validation entries (all subjects) for 5 MIT
   sample images.
 - `data/images/` — the 5 sample images (`MIT_0985.jpg` .. `MIT_0989.jpg`).
@@ -41,9 +58,11 @@ internvl3_5_8b_combined_release/
 ├── .gitignore
 ├── evaluate_vllm_unified.py
 ├── configs/
-│   └── internvl3_5_8b_combined.yaml
+│   ├── internvl3_5_8b_combined.yaml
+│   └── internvl3_5_8b_visual_search.yaml
 ├── model/
-│   └── combined_adapter/          # inference-only LoRA adapter
+│   ├── combined_adapter/          # free-viewing scanpath (rank 32)
+│   └── visual_search_adapter/     # COCO-Search18 visual search (rank 8)
 ├── data/
 │   ├── sample_MIT.json            # 75 entries for the 5 sample images
 │   ├── images/                    # MIT_0985.jpg .. MIT_0989.jpg
