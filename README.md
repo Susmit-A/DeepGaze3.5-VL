@@ -84,20 +84,3 @@ output distribution. With `--normalize-digits`, each digit's distribution is
 renormalized over the 10 digit tokens (0-9) before the coordinate
 log-likelihood is accumulated, so probability mass on non-digit tokens does not
 distort the score.
-
-## Reference numbers
-
-Dataset-level IG on the full 2%-subset per dataset, checkpoint 13000, with
-`assume_normalized` + `normalize-digits` (bits/fixation):
-
-| Dataset | IG (bits/fixation) |
-|---------|--------------------|
-| MIT     | 2.174              |
-| CAT     | 2.02               |
-| COCO    | 2.17               |
-| Daemons | ~2.9               |
-| Figrim  | 1.92               |
-
-Note: the bundled 5-image sample is far smaller than these full per-dataset
-subsets, so the IG you obtain from `run_eval.sh` on the sample will differ from
-these dataset-level numbers.

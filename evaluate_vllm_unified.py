@@ -2,15 +2,13 @@
 """
 Unified vLLM evaluation for scanpath prediction.
 
-Consolidates grid-based, Monte Carlo, and assume-normalized evaluation modes
+Consolidates grid-based and assume-normalized evaluation modes
 into a single script. Supports base models, LoRA-finetuned models (merged),
 and QLoRA models (native LoRA).
 
 Metric modes:
   - grid: Full 100x100 probability grid via digit-by-digit logprob probing.
       Computes IG, AUC, NSS, LL.  (~1111 queries per transition)
-  - mc: Monte Carlo sampling — scores K random + GT coordinates per transition,
-      estimates Z via importance sampling.  Computes IG, AUC, NSS, LL.
   - assume_normalized: Scores only GT coordinates, assumes Z≈1 (or uses fixed
       --log-z).  Computes IG, LL.  Fastest mode.
 
@@ -22,14 +20,6 @@ Usage:
         --val-json /path/to/val.json \
         --images-dir /path/to/images \
         --metric-mode grid --num-shots 0
-
-    # 3-shot MC evaluation (base model)
-    python evaluate_vllm_unified.py \
-        --base-model OpenGVLab/InternVL3_5-8B-HF \
-        --val-json /path/to/val.json \
-        --images-dir /path/to/images \
-        --shot-pool-json /path/to/train.json \
-        --metric-mode mc --num-shots 3
 
     # Fast assume-normalized evaluation
     python evaluate_vllm_unified.py \
@@ -1041,41 +1031,6 @@ class SaliencyComputer:
             resolution, batch_size
         )
 
-    def compute_multi_scanpath_distributions_hybrid(
-        self,
-        image: Image.Image,
-        text_prompts: List[str],
-        shot_examples: List[Dict],
-        all_gt_fixations: List[List[Tuple[int, int]]],
-        resolution: int = 100,
-        batch_size: int = 256,
-        top_k: int = 9,
-        gt_neighbours: Optional[int] = None,
-    ) -> Tuple[List[List[np.ndarray]], List[List[set]]]:
-        """Hybrid mode: full P(x) marginal, P(y|x) for selected x only.
-
-        Column selection modes:
-            - top_k (default): Probe top-k P(x) columns + GT x.
-            - gt_neighbours: Probe GT x ± N columns only. Conservative
-              lower bound for AUC/NSS (never overestimates vs full grid).
-
-        Returns:
-            (grids_per_scanpath, probed_cols_per_scanpath)
-        """
-        if len(all_gt_fixations) == 0:
-            return [], []
-
-        valid = [(tp, gf) for tp, gf in zip(text_prompts, all_gt_fixations)
-                 if len(gf) >= 2]
-        if not valid:
-            empty = [[] for _ in all_gt_fixations]
-            return empty, empty
-
-        return self._compute_multi_distributions_hybrid(
-            image, text_prompts, shot_examples, all_gt_fixations,
-            resolution, batch_size, top_k, gt_neighbours
-        )
-
     def _compute_multi_distributions_separate_digits(
         self,
         image: Image.Image,
@@ -1223,244 +1178,6 @@ class SaliencyComputer:
         for start, n_trans in scanpath_offsets:
             result.append(grids[start:start + n_trans])
         return result
-
-    def _compute_multi_distributions_hybrid(
-        self,
-        image: Image.Image,
-        text_prompts: List[str],
-        shot_examples: List[Dict],
-        all_gt_fixations: List[List[Tuple[int, int]]],
-        resolution: int = 100,
-        batch_size: int = 256,
-        top_k: int = 9,
-        gt_neighbours: Optional[int] = None,
-    ) -> Tuple[List[List[np.ndarray]], List[List[set]]]:
-        """Hybrid 4-phase: full P(x) marginal, then P(y|x) for selected x values.
-
-        Column selection:
-            - gt_neighbours=None (default): top-k P(x) columns + GT x.
-            - gt_neighbours=N: GT x ± N columns only (conservative lower bound).
-
-        Phases 1+2 compute P(x) for all 100 x values. Phases 3+4 only probe
-        selected x values. Unprobed columns are filled with peaked y-template.
-
-        Returns:
-            (grids_per_scanpath, probed_cols_per_scanpath) where probed_cols
-            is a list of sets of probed x indices per transition.
-        """
-        xy_sep = self._xy_separator or ", "
-        ASCII_DIGITS = set('0123456789')
-
-        # Build flat base_prompts for ALL scanpaths' transitions
-        base_prompts = []
-        scanpath_offsets = []
-        gt_targets = []  # GT (x, y) per transition
-        mm_data = None
-        offset = 0
-
-        for text_prompt, gt_fix in zip(text_prompts, all_gt_fixations):
-            n_trans = max(0, len(gt_fix) - 1)
-            scanpath_offsets.append((offset, n_trans))
-            for i in range(1, len(gt_fix)):
-                previous = gt_fix[:i]
-                partial = self.format_partial_scanpath(previous, xy_separator=xy_sep)
-                bp, md = self.build_prompt(image, text_prompt, shot_examples, partial)
-                base_prompts.append(bp)
-                gt_targets.append(gt_fix[i])
-                if mm_data is None:
-                    mm_data = md
-            offset += n_trans
-
-        total_transitions = offset
-        if total_transitions == 0:
-            empty = [[] for _ in all_gt_fixations]
-            return empty, empty
-
-        # Phase 1: Batch ALL P(x_d1) queries (identical to grid mode)
-        p1_results = self.generate_batched_with_logprobs(base_prompts, mm_data, max_logprobs=20)
-
-        per_t_d1 = []
-        for t, d1_logprobs in enumerate(p1_results):
-            d1_raw = {}
-            for token, logprob in d1_logprobs.items():
-                if token and len(token) == 1 and token in ASCII_DIGITS:
-                    d1_raw[int(token)] = logprob
-            per_t_d1.append(d1_raw)
-
-        # Phase 2: Batch ALL P(x_d2 | x_d1) queries (identical to grid mode)
-        p2_prompts = []
-        p2_index = []
-
-        for t in range(total_transitions):
-            d1_raw = per_t_d1[t]
-            if not d1_raw:
-                continue
-            for d1, raw_lp in d1_raw.items():
-                p2_prompts.append(base_prompts[t] + str(d1))
-                p2_index.append((t, d1))
-
-        per_t_x = [dict() for _ in range(total_transitions)]
-
-        if p2_prompts:
-            p2_results = []
-            for i in range(0, len(p2_prompts), batch_size):
-                batch = p2_prompts[i:i+batch_size]
-                p2_results.extend(self.generate_batched_with_logprobs(batch, mm_data, max_logprobs=20))
-
-            for (t, d1), d2_logprobs in zip(p2_index, p2_results):
-                for d2 in range(10):
-                    d2_str = str(d2)
-                    if d2_str in d2_logprobs:
-                        x_int = d1 * 10 + d2
-                        if x_int < resolution:
-                            per_t_x[t][x_int] = per_t_d1[t][d1] + d2_logprobs[d2_str]
-
-        # Auto-detect separator once
-        for t in range(total_transitions):
-            if per_t_x[t]:
-                best_x = max(per_t_x[t], key=per_t_x[t].get)
-                xy_sep = self.detect_xy_separator(
-                    base_prompts[t], mm_data, best_x // 10, best_x % 10
-                )
-                break
-
-        # --- HYBRID: Select x values to probe per transition ---
-        per_t_selected_x = []
-        for t in range(total_transitions):
-            x_logprobs = per_t_x[t]
-            if not x_logprobs:
-                per_t_selected_x.append(set())
-                continue
-            gt_x = gt_targets[t][0]
-            if gt_neighbours is not None:
-                # GT-neighbours mode: probe GT x ± N only
-                selected = set()
-                for dx in range(-gt_neighbours, gt_neighbours + 1):
-                    nx = gt_x + dx
-                    if 0 <= nx < resolution and nx in x_logprobs:
-                        selected.add(nx)
-            else:
-                # Top-k + bottom-k mode: probe highest and lowest P(x) columns + GT x
-                sorted_x = sorted(x_logprobs.keys(), key=lambda x: x_logprobs[x], reverse=True)
-                selected = set(sorted_x[:top_k])
-                selected.update(sorted_x[-top_k:])
-                selected.add(gt_x)
-            per_t_selected_x.append(selected)
-
-        # Phase 3: P(y_d1 | x) — only for selected x values
-        p3_prompts = []
-        p3_index = []
-
-        for t in range(total_transitions):
-            x_logprobs = per_t_x[t]
-            selected_x = per_t_selected_x[t]
-            if not x_logprobs:
-                continue
-            for x_int in sorted(selected_x):
-                if x_int in x_logprobs:
-                    d1 = x_int // 10
-                    d2 = x_int % 10
-                    x_suffix = f"{d1}{d2}{xy_sep}"
-                    p3_prompts.append(base_prompts[t] + x_suffix)
-                    p3_index.append((t, x_int, x_logprobs[x_int]))
-
-        if not p3_prompts:
-            # No valid x values — return empty grids
-            grids = [np.full((resolution, resolution), -20.0) for _ in range(total_transitions)]
-            result = []
-            probed_result = []
-            for start, n_trans in scanpath_offsets:
-                result.append(grids[start:start + n_trans])
-                probed_result.append(per_t_selected_x[start:start + n_trans])
-            return result, probed_result
-
-        p3_results = []
-        for i in range(0, len(p3_prompts), batch_size):
-            batch = p3_prompts[i:i+batch_size]
-            p3_results.extend(self.generate_batched_with_logprobs(batch, mm_data, max_logprobs=20))
-
-        # Phase 4: P(y_d2 | x, y_d1) — only for selected x values
-        p4_prompts = []
-        p4_info = []
-
-        for (t, x_int, log_p_x), x_prompt, y_d1_logprobs in zip(p3_index, p3_prompts, p3_results):
-            yd1_raw = {}
-            for token, logprob in y_d1_logprobs.items():
-                if token and len(token) == 1 and token in ASCII_DIGITS:
-                    yd1_raw[int(token)] = logprob
-
-            if not yd1_raw:
-                continue
-
-            for y_d1, raw_lp in yd1_raw.items():
-                p4_prompts.append(x_prompt + str(y_d1))
-                p4_info.append((t, x_int, log_p_x, y_d1, raw_lp))
-
-        # Initialize grids with -np.inf (marks unprobed cells before fill)
-        grids = [np.full((resolution, resolution), -np.inf) for _ in range(total_transitions)]
-
-        for i in range(0, len(p4_prompts), batch_size):
-            batch_prompts = p4_prompts[i:i+batch_size]
-            batch_info = p4_info[i:i+batch_size]
-            batch_results = self.generate_batched_with_logprobs(batch_prompts, mm_data, max_logprobs=20)
-
-            for (t, x_int, log_p_x, y_d1, log_p_y_d1), y_d2_logprobs in zip(batch_info, batch_results):
-                for token, logprob in y_d2_logprobs.items():
-                    if token and len(token) == 1 and token in ASCII_DIGITS:
-                        y_d2 = int(token)
-                        y_int = y_d1 * 10 + y_d2
-                        if y_int < resolution:
-                            total_log_p = log_p_x + log_p_y_d1 + logprob
-                            grids[t][y_int, x_int] = total_log_p
-
-        # Fill unprobed columns using peaked y-template from probed columns.
-        # Uniform fill (P(x)/100) causes AUC underestimation for low-AUC
-        # fixations because P(x)/100 can exceed GT density, putting all 100
-        # cells above GT. A peaked template preserves realistic cell ranking.
-        for t in range(total_transitions):
-            probed = per_t_selected_x[t]
-
-            # Build y-template from probed columns (P(x)-weighted average of P(y|x))
-            template = np.zeros(resolution, dtype=np.float64)
-            total_weight = 0.0
-            for x_int in probed:
-                col = grids[t][:, x_int].copy()
-                # Convert to density; skip columns with no valid cells
-                valid = np.isfinite(col)
-                if not valid.any():
-                    continue
-                col[~valid] = -50.0  # effectively zero
-                col_density = np.exp(col - col[valid].max())  # numerically stable
-                px = col_density.sum()
-                if px > 1e-30:
-                    py_given_x = col_density / px
-                    # Weight by P(x) marginal
-                    log_px = per_t_x[t].get(x_int, -20.0)
-                    w = np.exp(log_px)
-                    template += py_given_x * w
-                    total_weight += w
-
-            if total_weight > 1e-30:
-                template /= total_weight
-            else:
-                # Fallback to uniform if no valid probed columns
-                template[:] = 1.0 / resolution
-
-            # Clamp zeros and take log once
-            log_template = np.log(np.maximum(template, 1e-30))
-
-            # Fill unprobed columns: log P(x,y) = log P(x) + log template(y)
-            for x_int in range(resolution):
-                if x_int not in probed and x_int in per_t_x[t]:
-                    grids[t][:, x_int] = per_t_x[t][x_int] + log_template
-
-        # Split flat grids and probed sets back to per-scanpath
-        result = []
-        probed_result = []
-        for start, n_trans in scanpath_offsets:
-            result.append(grids[start:start + n_trans])
-            probed_result.append(per_t_selected_x[start:start + n_trans])
-        return result, probed_result
 
     def _compute_all_distributions_separate_digits(
         self,
@@ -1994,224 +1711,6 @@ class SaliencyComputer:
 
 
 # =============================================================================
-# Monte Carlo Sampler (coordinate generation + metric computation)
-# =============================================================================
-
-class MonteCarloSampler:
-    """Generates MC sample coordinates and computes metrics from MC estimates.
-
-    Coordinates are generated ONCE at init and shared across all images.
-    """
-
-    def __init__(
-        self,
-        K: int = 100,
-        proposal: str = 'stratified',
-        resolution: int = 100,
-        seed: int = 42,
-    ):
-        self.K = K
-        self.proposal = proposal
-        self.resolution = resolution
-        self.mc_rng = np.random.RandomState(seed)
-
-        self.mc_coordinates, self.mc_log_proposal_densities = self._generate_mc_samples(
-            K, resolution, proposal
-        )
-        print(f"Generated {len(self.mc_coordinates)} MC sample coordinates "
-              f"(proposal={proposal})")
-
-    def _generate_mc_samples(
-        self,
-        K: int,
-        resolution: int,
-        proposal: str,
-        centerbias: Optional[np.ndarray] = None,
-    ) -> Tuple[List[Tuple[int, int]], np.ndarray]:
-        """Generate K (x, y) sample coordinates with proposal log-densities."""
-        N = resolution * resolution
-        log_uniform = -np.log(N)
-
-        if proposal == 'uniform':
-            xs = self.mc_rng.randint(0, resolution, K)
-            ys = self.mc_rng.randint(0, resolution, K)
-            coords = [(int(x), int(y)) for x, y in zip(xs, ys)]
-            log_q = np.full(K, log_uniform)
-
-        elif proposal == 'stratified':
-            n_blocks_per_dim = int(np.sqrt(K))
-            block_size = resolution / n_blocks_per_dim
-
-            coords = []
-            for bx in range(n_blocks_per_dim):
-                for by in range(n_blocks_per_dim):
-                    x_lo = int(bx * block_size)
-                    x_hi = int((bx + 1) * block_size)
-                    y_lo = int(by * block_size)
-                    y_hi = int((by + 1) * block_size)
-                    x = self.mc_rng.randint(x_lo, min(x_hi, resolution))
-                    y = self.mc_rng.randint(y_lo, min(y_hi, resolution))
-                    coords.append((int(x), int(y)))
-
-            remaining = K - len(coords)
-            if remaining > 0:
-                xs = self.mc_rng.randint(0, resolution, remaining)
-                ys = self.mc_rng.randint(0, resolution, remaining)
-                coords.extend([(int(x), int(y)) for x, y in zip(xs, ys)])
-
-            coords = coords[:K]
-            log_q = np.full(len(coords), log_uniform)
-
-        elif proposal == 'centerbias':
-            if centerbias is None:
-                centerbias = create_center_bias((resolution, resolution))
-
-            density = np.exp(centerbias - centerbias.max())
-            density = density / density.sum()
-
-            flat_probs = density.flatten()
-            flat_indices = self.mc_rng.choice(N, size=K, replace=True, p=flat_probs)
-
-            coords = []
-            log_q = np.zeros(K)
-            for i, flat_idx in enumerate(flat_indices):
-                y = flat_idx // resolution
-                x = flat_idx % resolution
-                coords.append((int(x), int(y)))
-                log_q[i] = np.log(max(flat_probs[flat_idx], 1e-30))
-
-        else:
-            raise ValueError(f"Unknown MC proposal: {proposal}")
-
-        return coords, log_q
-
-    @staticmethod
-    def compute_metrics_from_mc(
-        gt_ll: float,
-        mc_lls: np.ndarray,
-        mc_log_q: np.ndarray,
-        gt_target: Tuple[int, int],
-        centerbias: np.ndarray,
-        centerbias_alpha: float,
-        resolution: int,
-        mc_coordinates: List[Tuple[int, int]],
-        model_sample_lls: Optional[np.ndarray] = None,
-    ) -> Dict:
-        """Compute IG, LL, AUC, NSS from GT logprob and MC sample logprobs.
-
-        Args:
-            gt_ll: Raw log P(gt_coord | prefix) from digit-by-digit scoring
-            mc_lls: Array of raw log P(mc_string_k | prefix) for K MC samples
-            mc_log_q: Array of log q(x_k, y_k) proposal densities
-            gt_target: (x, y) GT fixation coordinate
-            centerbias: Log-density centerbias map
-            centerbias_alpha: Mixing weight for centerbias
-            resolution: Grid resolution
-            mc_coordinates: List of MC sample (x, y) coordinates
-            model_sample_lls: Optional array of log P(x_k | prefix) for M
-                model-generated samples (for ms_nss computation)
-        """
-        K = len(mc_lls)
-        N = resolution * resolution
-
-        # Estimate log Z via importance sampling
-        log_importance_weights = mc_lls - mc_log_q
-        log_Z_hat = -np.log(K) + logsumexp(log_importance_weights)
-
-        # Normalized log probability at GT
-        normalized_gt_ll = gt_ll - log_Z_hat
-
-        # Centerbias at GT location
-        x_gt, y_gt = gt_target
-        x_idx = min(resolution - 1, max(0, x_gt))
-        y_idx = min(resolution - 1, max(0, y_gt))
-        log_cb_gt = centerbias[y_idx, x_idx]
-
-        # Apply centerbias mixing
-        if centerbias_alpha > 0:
-            combined_gt = normalized_gt_ll + centerbias_alpha * log_cb_gt
-            mc_normalized = mc_lls - log_Z_hat
-            mc_cb_vals = np.array([
-                centerbias[
-                    min(resolution - 1, max(0, mc_coordinates[k][1])),
-                    min(resolution - 1, max(0, mc_coordinates[k][0]))
-                ]
-                for k in range(K)
-            ])
-            mc_combined = mc_normalized + centerbias_alpha * mc_cb_vals
-
-            all_combined = np.concatenate([[combined_gt], mc_combined])
-            log_Z_combined = np.log(N) + logsumexp(all_combined) - np.log(len(all_combined))
-            normalized_gt_ll = combined_gt - log_Z_combined
-
-            auc_gt_val = combined_gt
-            auc_mc_vals = mc_combined
-        else:
-            auc_gt_val = gt_ll
-            auc_mc_vals = mc_lls
-
-        # IG
-        ig = (normalized_gt_ll - log_cb_gt) / np.log(2)
-
-        # LL
-        ll = normalized_gt_ll
-
-        # AUC (importance-weighted to correct for non-uniform proposal)
-        iw = np.exp(-mc_log_q)
-        auc = float(
-            np.sum(iw * (auc_gt_val > auc_mc_vals))
-            + 0.5 * np.sum(iw * (auc_gt_val == auc_mc_vals))
-        ) / np.sum(iw)
-
-        # NSS (scale-invariant: use raw unnormalized values, log Z = 0)
-        gt_density = np.exp(gt_ll)
-
-        # IS-estimate mean: E_uniform[u] = (1/N) * E_q[u/q]
-        log_mean = logsumexp(mc_lls - mc_log_q) - np.log(K) - np.log(N)
-        mean_density = np.exp(log_mean)
-
-        # IS-estimate E_uniform[u^2]
-        log_density_sq = 2.0 * mc_lls - mc_log_q - np.log(N)
-        e_density_sq = np.exp(logsumexp(log_density_sq) - np.log(K))
-
-        var_density = max(0.0, e_density_sq - mean_density**2)
-        std_density = np.sqrt(var_density) if var_density > 0 else 1e-10
-
-        nss = (gt_density - mean_density) / std_density
-
-        # Log-space NSS: z-score of GT log-prob vs MC sample log-probs
-        mc_ll_std = np.std(mc_lls)
-        log_nss = float((gt_ll - np.mean(mc_lls)) / mc_ll_std) if mc_ll_std > 0 else 0.0
-
-        # Model-sampled NSS: use model samples for E_p[p] estimation
-        # E_unif[p^2] = (1/N) * E_p[p(x)], estimated by sampling from p
-        ms_nss = None
-        if model_sample_lls is not None and len(model_sample_lls) > 0:
-            M = len(model_sample_lls)
-            # p_hat(x) = exp(ll(x)) / Z_hat (use Z_hat from uniform MC samples)
-            p_gt = np.exp(gt_ll - log_Z_hat)
-            p_model_samples = np.exp(model_sample_lls - log_Z_hat)
-            # (1/N) * mean_k(p(x_k)) estimates E_unif[p^2]
-            e_p_sq = np.mean(p_model_samples) / N
-            ms_var = max(0.0, e_p_sq - (1.0 / N) ** 2)
-            ms_std = np.sqrt(ms_var) if ms_var > 0 else 1e-10
-            ms_nss = float((p_gt - 1.0 / N) / ms_std)
-
-        result = {
-            'ig': float(ig),
-            'll': float(ll),
-            'auc': float(auc),
-            'nss': float(nss),
-            'log_nss': float(log_nss),
-            'raw_gt_ll': float(gt_ll),
-            'log_Z_hat': float(log_Z_hat),
-        }
-        if ms_nss is not None:
-            result['ms_nss'] = ms_nss
-        return result
-
-
-# =============================================================================
 # Centerbias Functions
 # =============================================================================
 
@@ -2389,162 +1888,6 @@ def tune_centerbias_alpha_grid(
     return best_alpha
 
 
-def tune_centerbias_alpha_mc(
-    saliency_computer: SaliencyComputer,
-    mc_sampler: 'MonteCarloSampler',
-    tune_samples: List[Dict],
-    images_dir: str,
-    shot_pool: List[Dict],
-    shot_selector: ShotSelector,
-    num_shots: int,
-    shot_strategy: str,
-    pkl_dir: Optional[str],
-    default_center_bias: np.ndarray,
-    use_data_centerbias: bool,
-    resolution: int,
-    batch_size: int,
-    alpha_candidates: List[float] = ALPHA_CANDIDATES,
-) -> float:
-    """Tune centerbias alpha using MC evaluation."""
-    import time as _time
-
-    print(f"\n{'='*70}")
-    print("Tuning centerbias alpha (Monte Carlo)")
-    print(f"{'='*70}")
-    print(f"  Tuning samples: {len(tune_samples)}")
-    print(f"  Alpha candidates: {alpha_candidates}")
-    print(f"  MC samples: {mc_sampler.K}")
-    tune_start = _time.time()
-
-    transition_data = []
-    samples_processed = 0
-
-    mc_coords = mc_sampler.mc_coordinates
-    mc_log_q = mc_sampler.mc_log_proposal_densities
-    xy_sep = saliency_computer._xy_separator or ", "
-
-    for idx, sample in enumerate(tune_samples):
-        image_path = os.path.join(images_dir, sample['images'][0])
-
-        try:
-            image = Image.open(image_path).convert('RGB')
-        except Exception as e:
-            print(f"  [{idx+1}/{len(tune_samples)}] SKIP {sample['images'][0]}: {e}")
-            continue
-
-        conv = sample['conversations']
-        text_prompt = conv[0]['value'].replace("<image>", "").strip()
-        gt_fixations = parse_scanpath_reduced(conv[1]['value'])
-
-        if len(gt_fixations) < 2:
-            continue
-
-        if use_data_centerbias and pkl_dir:
-            cb, _ = load_centerbias_from_pkl(sample['images'][0], pkl_dir, resolution)
-            if cb is None:
-                cb = default_center_bias
-        else:
-            cb = default_center_bias
-
-        selected_shots = shot_selector.select(
-            shot_pool, num_shots, shot_strategy, test_sample=sample
-        )
-        shot_examples = prepare_shot_examples(selected_shots, images_dir)
-
-        # Build transition info and base prompts
-        transition_info = []
-        base_prompts = []
-        mm_data = None
-
-        for i in range(1, len(gt_fixations)):
-            previous = gt_fixations[:i]
-            target = gt_fixations[i]
-            partial_base = saliency_computer.format_partial_scanpath(
-                previous, xy_separator=xy_sep
-            )
-            bp, md = saliency_computer.build_prompt(image, text_prompt, shot_examples, partial_base)
-            if mm_data is None:
-                mm_data = md
-            base_prompts.append(bp)
-            transition_info.append({
-                'scanpath_idx': 0,
-                'fixation_idx': i,
-                'gt_target': target,
-                'base_prompt': bp,
-            })
-
-        if not transition_info:
-            continue
-
-        # Detect separator if needed
-        if saliency_computer._xy_separator is None:
-            saliency_computer.detect_xy_separator(base_prompts[0], mm_data)
-            xy_sep = saliency_computer._xy_separator
-
-        # Score GT + MC coordinates
-        per_t_lls = saliency_computer.score_coordinates(
-            base_prompts, mm_data, transition_info,
-            mc_coords, xy_sep, batch_size,
-        )
-
-        for t, tinfo in enumerate(transition_info):
-            gt_target = tinfo['gt_target']
-            gt_ll = per_t_lls[t].get(gt_target, -20.0)
-            mc_lls_arr = np.array([per_t_lls[t].get(c, -20.0) for c in mc_coords])
-            log_iw = mc_lls_arr - mc_log_q
-            log_Z_hat = -np.log(len(mc_lls_arr)) + logsumexp(log_iw)
-
-            transition_data.append({
-                'raw_gt_ll': gt_ll,
-                'log_Z_hat': log_Z_hat,
-                'gt_target': gt_target,
-                'centerbias': cb,
-            })
-
-        samples_processed += 1
-        print(f"  [{idx+1}/{len(tune_samples)}] {sample['images'][0]}: "
-              f"{len(gt_fixations)} fixations", flush=True)
-
-    if not transition_data:
-        print("  No valid tuning data, using alpha=0.0")
-        return 0.0
-
-    print(f"\n  Collected {len(transition_data)} transitions from {samples_processed} samples")
-
-    best_alpha = 0.0
-    best_mean_ll = -np.inf
-
-    for alpha in alpha_candidates:
-        lls = []
-        for td in transition_data:
-            normalized_ll = td['raw_gt_ll'] - td['log_Z_hat']
-            x, y = td['gt_target']
-            x_idx = min(resolution - 1, max(0, x))
-            y_idx = min(resolution - 1, max(0, y))
-            cb_val = td['centerbias'][y_idx, x_idx]
-
-            if alpha > 0:
-                combined_ll = normalized_ll + alpha * cb_val
-            else:
-                combined_ll = normalized_ll
-
-            lls.append(combined_ll)
-
-        mean_ll = np.mean(lls)
-        marker = " <-- best" if mean_ll > best_mean_ll else ""
-        print(f"    alpha={alpha:5.1f}: mean LL = {mean_ll:.4f}{marker}")
-
-        if mean_ll > best_mean_ll:
-            best_mean_ll = mean_ll
-            best_alpha = alpha
-
-    total_elapsed = _time.time() - tune_start
-    print(f"\n  Best alpha: {best_alpha} (mean LL = {best_mean_ll:.4f})")
-    print(f"  Total tuning time: {total_elapsed:.1f}s")
-    print(f"{'='*70}\n")
-    return best_alpha
-
-
 # =============================================================================
 # Metrics (for grid mode)
 # =============================================================================
@@ -2600,58 +1943,6 @@ def compute_nss(
     else:
         nss = 0.0
     return nss
-
-
-def compute_nss_hybrid_corrected(
-    log_density: np.ndarray,
-    fixation: Tuple[int, int],
-    probed_cols: set,
-    resolution: int = 100,
-) -> float:
-    """Compute NSS with variance correction for hybrid mode.
-
-    Unprobed columns use uniform-y fill, which underestimates E[p^2] (and hence
-    std) because the true within-column distribution is peaked (Jensen's inequality).
-
-    Correction: var_true ≈ var_hybrid + (1/N) * sum_{unprobed x} P(x)^2 * (c_avg - 1/res)
-    where c_avg = mean over probed columns of sum_y P(y|x)^2.
-    """
-    x, y = fixation
-    x_idx = min(resolution - 1, max(0, x))
-    y_idx = min(resolution - 1, max(0, y))
-    density = np.exp(log_density - logsumexp(log_density))
-    N = resolution * resolution
-    mean_density = density.mean()
-
-    # Compute c(x) = sum_y P(y|x)^2 for probed columns
-    c_values = []
-    for xc in probed_cols:
-        if xc < resolution:
-            col = density[:, xc]
-            px = col.sum()
-            if px > 1e-30:
-                py_given_x = col / px
-                c_values.append(np.sum(py_given_x ** 2))
-
-    c_avg = np.mean(c_values) if c_values else 1.0 / resolution
-
-    # Variance from the hybrid grid (with uniform-y fill)
-    var_hybrid = np.mean(density ** 2) - mean_density ** 2
-
-    # Correction for unprobed columns
-    correction = 0.0
-    for xc in range(resolution):
-        if xc not in probed_cols:
-            px = density[:, xc].sum()  # P(x) for this column
-            correction += px ** 2 * (c_avg - 1.0 / resolution)
-    correction /= N
-
-    var_corrected = max(0.0, var_hybrid + correction)
-    std_corrected = np.sqrt(var_corrected)
-
-    if std_corrected > 0:
-        return float((density[y_idx, x_idx] - mean_density) / std_corrected)
-    return 0.0
 
 
 def compute_log_nss(
@@ -3300,31 +2591,13 @@ def main():
 
     # Metric mode
     parser.add_argument('--metric-mode', type=str, default='assume_normalized',
-                        choices=['grid', 'mc', 'hybrid', 'assume_normalized'],
-                        help='assume_normalized (default, fast IG/LL with normalize-digits), '
-                             'grid (full 100x100), hybrid (top-k x marginals), '
-                             'or mc (Monte Carlo)')
+                        choices=['grid', 'assume_normalized'],
+                        help='assume_normalized (default, fast IG/LL with normalize-digits) '
+                             'or grid (full 100x100)')
     parser.add_argument('--assume-normalized', action='store_true',
                         help='Shorthand for --metric-mode assume_normalized')
     parser.add_argument('--log-z', type=float, default=None,
                         help='Fixed log Z value (implies assume_normalized mode)')
-
-    # MC settings
-    parser.add_argument('--mc-samples', type=int, default=10,
-                        help='Number of MC sample coordinates per transition (K)')
-    parser.add_argument('--mc-proposal', type=str, default='stratified',
-                        choices=['uniform', 'stratified', 'centerbias'],
-                        help='MC sampling strategy')
-    parser.add_argument('--mc-model-samples', type=int, default=0,
-                        help='Number of model-generated samples for ms_nss (0=disabled)')
-
-    # Hybrid settings
-    parser.add_argument('--hybrid-top-k', type=int, default=9,
-                        help='Number of top x values for hybrid mode (default: 9)')
-    parser.add_argument('--gt-neighbours', type=int, nargs='?', const=1, default=None,
-                        help='Probe GT x ± N columns only (default N=1). '
-                             'Sets hybrid mode with gt-neighbour column selection '
-                             'instead of top-k. Conservative: never overestimates AUC/NSS vs grid.')
 
     # Centerbias
     parser.add_argument('--pkl-dir', type=str, default='/mnt/lustre/work/bethge/bkr710/projects/deepgaze-iccv/tmp_datasets_withsubj',
@@ -3391,11 +2664,6 @@ def main():
             print(f"WARNING: --normalize-digits makes --log-z redundant. "
                   f"Ignoring --log-z {args.log_z} and using log_z=0.")
         args.log_z = 0.0
-    if args.gt_neighbours is not None:
-        args.metric_mode = 'hybrid'
-        args.hybrid_gt_neighbours = args.gt_neighbours
-    else:
-        args.hybrid_gt_neighbours = None
 
     # Validate
     if args.temporal and args.durations:
@@ -3466,15 +2734,7 @@ def main():
     print(f"Num shots: {args.num_shots}")
     print(f"Shot strategy: {args.shot_strategy}")
     print(f"Metric mode: {args.metric_mode}")
-    if args.metric_mode == 'mc':
-        print(f"MC samples: {args.mc_samples}")
-        print(f"MC proposal: {args.mc_proposal}")
-    elif args.metric_mode == 'hybrid':
-        if args.hybrid_gt_neighbours is not None:
-            print(f"  Hybrid column selection: GT x ± {args.hybrid_gt_neighbours}")
-        else:
-            print(f"  Hybrid top-k: {args.hybrid_top_k}")
-    elif args.metric_mode == 'assume_normalized':
+    if args.metric_mode == 'assume_normalized':
         if args.log_z is not None:
             print(f"  (using fixed log Z = {args.log_z})")
         else:
@@ -3526,16 +2786,6 @@ def main():
         normalize_digits=args.normalize_digits,
     )
 
-    # Create MC sampler if needed
-    mc_sampler = None
-    if args.metric_mode == 'mc':
-        mc_sampler = MonteCarloSampler(
-            K=args.mc_samples,
-            proposal=args.mc_proposal,
-            resolution=args.resolution,
-            seed=args.seed,
-        )
-
     # =========================================================================
     # Apply data limits
     # =========================================================================
@@ -3586,7 +2836,7 @@ def main():
         tune_rng = random.Random(args.seed)
         tune_samples = tune_rng.sample(tune_pool, min(args.tune_num_samples, len(tune_pool)))
 
-        if args.metric_mode in ('grid', 'hybrid'):
+        if args.metric_mode == 'grid':
             centerbias_alpha = tune_centerbias_alpha_grid(
                 saliency_computer=saliency_computer,
                 tune_samples=tune_samples,
@@ -3602,27 +2852,8 @@ def main():
                 batch_size=args.batch_size,
             )
         else:
-            # MC-based tuning for mc and assume_normalized modes
-            if mc_sampler is None:
-                mc_sampler = MonteCarloSampler(
-                    K=args.mc_samples, proposal=args.mc_proposal,
-                    resolution=args.resolution, seed=args.seed,
-                )
-            centerbias_alpha = tune_centerbias_alpha_mc(
-                saliency_computer=saliency_computer,
-                mc_sampler=mc_sampler,
-                tune_samples=tune_samples,
-                images_dir=args.images_dir,
-                shot_pool=shot_pool,
-                shot_selector=shot_selector,
-                num_shots=args.num_shots,
-                shot_strategy=args.shot_strategy,
-                pkl_dir=args.pkl_dir,
-                default_center_bias=default_center_bias,
-                use_data_centerbias=use_data_centerbias,
-                resolution=args.resolution,
-                batch_size=args.batch_size,
-            )
+            print("Centerbias tuning is only supported in grid mode; "
+                  "skipping tuning (centerbias_alpha=0.0).")
     else:
         print("Centerbias augmentation: disabled (use --tune-centerbias or --centerbias-alpha)")
 
@@ -3666,11 +2897,6 @@ def main():
 
     timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
     mode_label = args.metric_mode
-    if args.metric_mode == 'hybrid':
-        if args.hybrid_gt_neighbours is not None:
-            mode_label = f"hybrid_gtn{args.hybrid_gt_neighbours}"
-        else:
-            mode_label = f"hybrid_k{args.hybrid_top_k}"
     results_file = output_dir / f"unified_{mode_label}_{args.num_shots}shot_{timestamp}.json"
 
     all_results = []
@@ -3871,229 +3097,6 @@ def main():
                         )
 
             # =================================================================
-            # MC MODE
-            # =================================================================
-            elif args.metric_mode == 'mc':
-                mc_coords = mc_sampler.mc_coordinates
-                mc_log_q = mc_sampler.mc_log_proposal_densities
-                xy_sep = saliency_computer._xy_separator or ", "
-
-                # Build transition info for all scanpaths
-                transition_info = []
-                base_prompts_all = []
-                mm_data = None
-
-                for s_idx, (text_prompt, gt_fix) in enumerate(zip(text_prompts, all_gt_fixations)):
-                    for t_idx in range(1, len(gt_fix)):
-                        previous = gt_fix[:t_idx]
-                        target = gt_fix[t_idx]
-                        partial_base = saliency_computer.format_partial_scanpath(
-                            previous, xy_separator=xy_sep
-                        )
-                        bp, md = saliency_computer.build_prompt(
-                            image, text_prompt, shot_examples, partial_base
-                        )
-                        if mm_data is None:
-                            mm_data = md
-                        base_prompts_all.append(bp)
-                        transition_info.append({
-                            'scanpath_idx': s_idx,
-                            'fixation_idx': t_idx,
-                            'gt_target': target,
-                            'base_prompt': bp,
-                        })
-
-                if transition_info:
-                    # Detect separator if needed
-                    if saliency_computer._xy_separator is None:
-                        saliency_computer.detect_xy_separator(base_prompts_all[0], mm_data)
-                        xy_sep = saliency_computer._xy_separator
-
-                    print(f"    MC: {len(transition_info)} transitions, {mc_sampler.K} MC samples",
-                          flush=True)
-
-                    # Generate model samples for ms_nss (if enabled)
-                    per_t_model_coords = None
-                    if args.mc_model_samples > 0:
-                        print(f"    Generating {args.mc_model_samples} model samples per transition...",
-                              flush=True)
-                        per_t_model_coords = saliency_computer.generate_model_samples(
-                            base_prompts_all, mm_data,
-                            num_samples=args.mc_model_samples,
-                            xy_sep=xy_sep,
-                            batch_size=args.batch_size,
-                        )
-
-                    # Collect all extra coordinates to score (model samples)
-                    # We score them alongside the MC coords using score_coordinates
-                    # by adding unique model-generated coords to the scoring set
-                    model_coords_per_t = [[] for _ in range(len(transition_info))]
-                    extra_coords_set = set()
-                    if per_t_model_coords is not None:
-                        for t_idx, coords in enumerate(per_t_model_coords):
-                            model_coords_per_t[t_idx] = coords
-                            extra_coords_set.update(coords)
-                    # Remove coords already in mc_coords
-                    extra_coords = sorted(extra_coords_set - set(mc_coords))
-                    all_score_coords = list(mc_coords) + extra_coords
-
-                    per_t_lls = saliency_computer.score_coordinates(
-                        base_prompts_all, mm_data, transition_info,
-                        all_score_coords, xy_sep, args.batch_size,
-                    )
-
-                    # Compute metrics per transition, aggregate per scanpath
-                    for s_idx in range(len(valid_entries)):
-                        s_transitions = [
-                            (t_idx, transition_info[t_idx])
-                            for t_idx in range(len(transition_info))
-                            if transition_info[t_idx]['scanpath_idx'] == s_idx
-                        ]
-
-                        fixation_metrics = []
-                        for t_idx, tinfo in s_transitions:
-                            gt_target = tinfo['gt_target']
-                            gt_ll = per_t_lls[t_idx].get(gt_target, -20.0)
-                            mc_lls_arr = np.array([
-                                per_t_lls[t_idx].get(coord, -20.0)
-                                for coord in mc_coords
-                            ])
-
-                            # Get model sample log-probs for this transition
-                            ms_lls = None
-                            if model_coords_per_t[t_idx]:
-                                ms_lls = np.array([
-                                    per_t_lls[t_idx].get(coord, -20.0)
-                                    for coord in model_coords_per_t[t_idx]
-                                ])
-
-                            metrics = MonteCarloSampler.compute_metrics_from_mc(
-                                gt_ll=gt_ll,
-                                mc_lls=mc_lls_arr,
-                                mc_log_q=mc_log_q,
-                                gt_target=gt_target,
-                                centerbias=center_bias,
-                                centerbias_alpha=centerbias_alpha,
-                                resolution=args.resolution,
-                                mc_coordinates=mc_coords,
-                                model_sample_lls=ms_lls,
-                            )
-                            fixation_metrics.append({
-                                'idx': tinfo['fixation_idx'],
-                                'target': gt_target,
-                                **metrics,
-                            })
-
-                        if fixation_metrics:
-                            result = group_results[s_idx]
-                            result['lp_mean_ig'] = np.mean([m['ig'] for m in fixation_metrics])
-                            result['lp_mean_auc'] = np.mean([m['auc'] for m in fixation_metrics])
-                            result['lp_mean_nss'] = np.mean([m['nss'] for m in fixation_metrics])
-                            if fixation_metrics[0].get('log_nss') is not None:
-                                result['lp_mean_log_nss'] = np.mean([m['log_nss'] for m in fixation_metrics])
-                            ms_nss_vals = [m['ms_nss'] for m in fixation_metrics if m.get('ms_nss') is not None]
-                            if ms_nss_vals:
-                                result['lp_mean_ms_nss'] = np.mean(ms_nss_vals)
-                            result['lp_mean_ll'] = np.mean([m['ll'] for m in fixation_metrics])
-                            result['lp_fixation_metrics'] = fixation_metrics
-
-                _mc_elapsed = _time.time() - _group_t0
-                for (idx, sample, text_prompt, gt_fixations, gt_temporal, gt_durations), result in zip(
-                    valid_entries, group_results
-                ):
-                    if result.get('lp_mean_ig') is not None:
-                        print(
-                            f"    Sample {idx} [MC]: "
-                            f"IG={result['lp_mean_ig']:.2f}, "
-                            f"AUC={result['lp_mean_auc']:.4f}, "
-                            f"LL={result['lp_mean_ll']:.2f}  "
-                            f"({_mc_elapsed:.1f}s)",
-                            flush=True
-                        )
-
-            # =================================================================
-            # HYBRID MODE
-            # =================================================================
-            elif args.metric_mode == 'hybrid':
-                all_scanpath_grids, all_scanpath_probed = saliency_computer.compute_multi_scanpath_distributions_hybrid(
-                    image, text_prompts, shot_examples,
-                    all_gt_fixations, args.resolution, args.batch_size,
-                    top_k=args.hybrid_top_k,
-                    gt_neighbours=args.hybrid_gt_neighbours,
-                )
-
-                for (idx, sample, text_prompt, gt_fixations, gt_temporal, gt_durations), result, scanpath_grids, probed_cols_list in zip(
-                    valid_entries, group_results, all_scanpath_grids, all_scanpath_probed
-                ):
-                    fixation_metrics = []
-                    saved_grids = []
-                    for i, log_density in enumerate(scanpath_grids):
-                        target = gt_fixations[i + 1]
-                        probed_cols = probed_cols_list[i] if i < len(probed_cols_list) else set()
-
-                        valid_mask = np.isfinite(log_density)
-                        if not valid_mask.any():
-                            continue
-                        log_density = log_density - min(0.0, logsumexp(log_density[valid_mask]))
-
-                        if centerbias_alpha > 0:
-                            log_density = log_density + centerbias_alpha * center_bias
-                            log_density = log_density - min(0.0, logsumexp(log_density))
-
-                        if args.save_grids:
-                            saved_grids.append(log_density.copy())
-
-                        ig = compute_information_gain(log_density, center_bias, target, args.resolution)
-                        auc = compute_auc(log_density, target, args.resolution)
-                        nss = compute_nss(log_density, target, args.resolution)
-                        nss_corrected = compute_nss_hybrid_corrected(
-                            log_density, target, probed_cols, args.resolution
-                        )
-                        log_nss = compute_log_nss(log_density, target, args.resolution)
-
-                        target_x = min(args.resolution - 1, max(0, target[0]))
-                        target_y = min(args.resolution - 1, max(0, target[1]))
-                        ll = float(log_density[target_y, target_x])
-
-                        fixation_metrics.append({
-                            'idx': i + 1, 'target': target,
-                            'ig': ig, 'auc': auc, 'nss': nss,
-                            'nss_corrected': nss_corrected,
-                            'log_nss': log_nss, 'll': ll,
-                        })
-
-                    if args.save_grids and saved_grids:
-                        grids_dir = output_dir / "grids"
-                        grids_dir.mkdir(exist_ok=True)
-                        np.savez_compressed(
-                            grids_dir / f"sample_{idx:05d}.npz",
-                            grids=np.stack(saved_grids).astype(np.float16),
-                            gt_fixations=np.array(gt_fixations, dtype=np.int16),
-                            image=image_path,
-                        )
-
-                    if fixation_metrics:
-                        result['lp_mean_ig'] = np.mean([m['ig'] for m in fixation_metrics])
-                        result['lp_mean_auc'] = np.mean([m['auc'] for m in fixation_metrics])
-                        result['lp_mean_nss'] = np.mean([m['nss'] for m in fixation_metrics])
-                        result['lp_mean_nss_corrected'] = np.mean([m['nss_corrected'] for m in fixation_metrics])
-                        if fixation_metrics[0].get('log_nss') is not None:
-                            result['lp_mean_log_nss'] = np.mean([m['log_nss'] for m in fixation_metrics])
-                        result['lp_mean_ll'] = np.mean([m['ll'] for m in fixation_metrics])
-                        result['lp_fixation_metrics'] = fixation_metrics
-
-                        _elapsed = _time.time() - _group_t0
-                        print(
-                            f"    Sample {idx} [{mode_label}]: "
-                            f"IG={result['lp_mean_ig']:.2f}, "
-                            f"AUC={result['lp_mean_auc']:.4f}, "
-                            f"NSS={result['lp_mean_nss_corrected']:.2f}, "
-                            f"LL={result['lp_mean_ll']:.2f}  "
-                            f"({_elapsed:.1f}s)",
-                            flush=True
-                        )
-
-            # =================================================================
             # ASSUME_NORMALIZED MODE
             # =================================================================
             elif args.metric_mode == 'assume_normalized':
@@ -4248,16 +3251,6 @@ def main():
     print(f"Metric mode: {args.metric_mode}")
     print(f"Num shots: {args.num_shots}")
     print(f"Shot strategy: {args.shot_strategy}")
-    if args.metric_mode == 'mc':
-        print(f"MC samples: {args.mc_samples}")
-        print(f"MC proposal: {args.mc_proposal}")
-        if args.mc_model_samples > 0:
-            print(f"MC model samples: {args.mc_model_samples}")
-    elif args.metric_mode == 'hybrid':
-        if args.hybrid_gt_neighbours is not None:
-            print(f"Hybrid mode: gt-neighbours ± {args.hybrid_gt_neighbours}")
-        else:
-            print(f"Hybrid top-k: {args.hybrid_top_k}")
     print(f"Centerbias alpha: {centerbias_alpha}")
 
     if all_results:
