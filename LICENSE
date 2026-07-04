@@ -1,0 +1,29 @@
+Release Notice and Licensing Terms
+==================================
+
+This repository packages research code together with a LoRA adapter for
+scanpath prediction.
+
+1. Code and LoRA adapter
+   The evaluation code and the fine-tuned LoRA adapter weights
+   (model/combined_adapter/) contained in this repository are released for
+   NON-COMMERCIAL RESEARCH USE ONLY.
+
+2. Base model
+   This adapter is applied on top of the base model
+   OpenGVLab/InternVL3_5-8B-HF, which is NOT distributed here and is pulled
+   from HuggingFace at runtime. The base model is governed by its own upstream
+   license, which you must review and accept on HuggingFace before use. Nothing
+   in this notice grants you any rights to the base model weights.
+
+3. Sample data
+   The bundled MIT sample images (data/images/) and the derived center-bias
+   priors (data/centerbias/) originate from the MIT / CAT2000-family
+   eye-tracking datasets. They are included here solely as a small illustrative
+   sample and remain subject to the original terms and conditions of those
+   datasets. Consult the respective dataset providers for redistribution and
+   usage terms.
+
+THE SOFTWARE AND DATA ARE PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED. THE AUTHORS SHALL NOT BE LIABLE FOR ANY CLAIM, DAMAGES, OR
+OTHER LIABILITY ARISING FROM THE USE OF THIS SOFTWARE OR DATA.

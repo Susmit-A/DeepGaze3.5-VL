@@ -1,0 +1,1127 @@
+[
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(53, 48), (72, 32), (38, 54), (41, 59), (19, 64), (56, 86), (76, 92), (76, 41)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 47), (69, 31), (35, 50), (38, 56), (19, 38), (71, 74), (79, 79), (70, 34)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 10 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(51, 51), (51, 63), (56, 62), (51, 64), (57, 65), (50, 71), (70, 80), (51, 30), (53, 40), (51, 35)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 6 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 49), (47, 61), (54, 59), (48, 64), (54, 61), (45, 66)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 6 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 51), (72, 38), (38, 60), (72, 39), (54, 76), (37, 61)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 13 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 50), (53, 59), (37, 53), (07, 52), (78, 31), (82, 29), (82, 60), (88, 72), (67, 67), (47, 60), (40, 54), (51, 62), (27, 64)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 13 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(53, 50), (32, 53), (29, 40), (17, 44), (11, 43), (40, 68), (37, 62), (38, 51), (20, 54), (71, 71), (81, 67), (58, 51), (62, 53)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 11 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(47, 48), (26, 42), (13, 43), (59, 56), (59, 51), (20, 45), (28, 60), (38, 56), (64, 78), (69, 90), (53, 53)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 10 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(48, 56), (65, 58), (79, 35), (56, 39), (79, 34), (10, 51), (36, 57), (28, 63), (62, 70), (70, 67)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(51, 51), (79, 38), (81, 31), (78, 58), (75, 71), (70, 77), (41, 56), (25, 64), (80, 67)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 7 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(48, 49), (56, 35), (57, 56), (48, 63), (48, 72), (49, 78), (70, 61)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 10 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(48, 48), (35, 45), (28, 38), (17, 40), (19, 54), (52, 61), (50, 50), (56, 48), (82, 67), (32, 53)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 51), (69, 70), (36, 55), (72, 34), (57, 48), (55, 62), (66, 79), (60, 71)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 7 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 47), (46, 53), (46, 64), (71, 48), (72, 53), (68, 52), (56, 32)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 10 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 51), (46, 57), (52, 60), (47, 65), (54, 65), (49, 62), (55, 60), (44, 66), (70, 77), (47, 64)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 46), (37, 50), (31, 37), (18, 39), (09, 38), (28, 49), (21, 50), (35, 48), (49, 65)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 1 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 61)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 51), (53, 63), (47, 77), (46, 90), (55, 59), (47, 59), (50, 70), (49, 38), (47, 43)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 5 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 54), (48, 61), (46, 71), (54, 47), (56, 42)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 10 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 51), (59, 44), (46, 63), (52, 61), (47, 67), (43, 74), (48, 73), (43, 72), (58, 39), (20, 16)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(48, 46), (47, 59), (53, 59), (49, 64), (54, 57), (47, 64), (70, 76), (62, 73), (47, 43)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 11 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 48), (38, 51), (77, 31), (82, 29), (81, 49), (81, 26), (42, 52), (38, 53), (48, 57), (79, 32), (81, 28)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 53), (77, 31), (62, 76), (76, 33), (34, 51), (40, 55), (68, 61), (62, 60), (44, 57)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 52), (73, 31), (59, 66), (51, 66), (38, 54), (59, 79), (73, 33), (54, 32)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 50), (68, 40), (38, 52), (68, 39), (43, 39), (33, 39), (38, 53), (72, 38)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 7 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 60), (55, 65), (51, 69), (58, 65), (51, 69), (58, 66), (53, 63)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 6 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 51), (31, 50), (71, 33), (47, 47), (38, 55), (36, 56)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 3 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 44), (47, 74), (70, 70)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 49), (68, 32), (36, 54), (73, 75), (73, 77), (54, 82), (35, 60), (70, 30), (36, 35)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 49), (50, 63), (57, 65), (47, 37), (52, 40), (60, 58), (48, 53), (50, 61)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 13 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(48, 47), (48, 44), (31, 43), (10, 37), (25, 54), (18, 52), (12, 40), (04, 37), (51, 70), (63, 78), (81, 72), (43, 51), (38, 50)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 11 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 45), (80, 33), (64, 54), (36, 61), (24, 58), (07, 57), (04, 50), (78, 60), (86, 61), (79, 52), (82, 27)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 51), (71, 38), (35, 59), (41, 60), (64, 78), (72, 39), (66, 74), (46, 48), (72, 36)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(51, 50), (72, 30), (60, 43), (51, 67), (39, 53), (41, 56), (75, 30), (40, 19), (73, 30)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(48, 52), (69, 62), (70, 62), (65, 66), (70, 70), (65, 72), (20, 29), (19, 23), (57, 60)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 7 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 52), (58, 40), (22, 26), (23, 21), (44, 68), (65, 58), (70, 57)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 7 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 54), (37, 51), (22, 42), (31, 42), (60, 54), (62, 69), (34, 61)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 52), (48, 61), (50, 62), (48, 48), (45, 59), (50, 36), (47, 41), (52, 40)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 2 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(51, 47), (89, 40)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 5 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 48), (82, 31), (81, 54), (68, 56), (54, 58)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 13 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 51), (32, 35), (19, 37), (13, 39), (32, 54), (36, 48), (64, 52), (60, 48), (84, 68), (68, 96), (66, 99), (51, 80), (19, 53)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(47, 46), (35, 51), (05, 49), (68, 40), (82, 30), (80, 62), (90, 68), (46, 58), (75, 59)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 10 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 51), (28, 48), (22, 42), (18, 40), (19, 54), (41, 44), (34, 44), (66, 55), (80, 61), (66, 42)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(54, 52), (60, 35), (71, 53), (74, 62), (52, 72), (50, 64), (50, 72), (23, 22), (23, 14)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 11 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 48), (75, 48), (81, 32), (82, 52), (38, 51), (15, 56), (11, 54), (39, 52), (53, 49), (44, 49), (52, 52)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 49), (54, 42), (65, 53), (71, 56), (24, 28), (23, 22), (53, 35), (57, 34)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 51), (20, 40), (09, 39), (20, 38), (20, 53), (37, 49), (59, 50), (36, 49), (55, 52)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 11 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 51), (68, 38), (73, 32), (37, 52), (42, 62), (46, 59), (42, 62), (57, 86), (65, 89), (53, 74), (38, 58)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(51, 51), (26, 47), (22, 54), (14, 45), (23, 44), (08, 46), (29, 59), (36, 59)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 7 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 56), (38, 52), (22, 43), (14, 41), (20, 52), (12, 44), (20, 56)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 12 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(53, 55), (37, 54), (32, 37), (20, 38), (13, 40), (51, 66), (59, 49), (26, 52), (20, 53), (38, 51), (82, 65), (86, 69)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 5 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 51), (43, 54), (72, 35), (42, 59), (54, 71)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 6 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(48, 46), (68, 44), (42, 49), (38, 54), (59, 75), (68, 44)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 49), (41, 52), (81, 29), (36, 53), (05, 52), (69, 78), (81, 61), (80, 58), (38, 52)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 12 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 49), (50, 61), (54, 63), (51, 71), (52, 35), (49, 38), (66, 60), (70, 83), (74, 31), (41, 22), (24, 19), (15, 23)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(53, 47), (56, 60), (53, 69), (60, 64), (73, 80), (50, 61), (53, 24), (52, 30), (52, 32)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 5 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 49), (19, 51), (82, 34), (50, 62), (39, 83)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(51, 51), (37, 49), (20, 50), (37, 48), (57, 46), (64, 56), (71, 69), (54, 51)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 8 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 52), (50, 62), (53, 70), (57, 64), (47, 72), (52, 68), (54, 65), (50, 62)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 50), (45, 60), (51, 60), (55, 60), (44, 66), (47, 31), (50, 37), (42, 56), (50, 59)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 2 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 51), (48, 60)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 2 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 49), (53, 48)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 46), (36, 39), (48, 61), (50, 70), (44, 62), (47, 65), (49, 72), (58, 41), (22, 28)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 4 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(51, 50), (72, 29), (39, 49), (38, 52)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 42), (80, 31), (33, 55), (22, 49), (35, 48), (74, 27), (81, 26), (70, 56), (21, 58)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 7 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(52, 52), (51, 59), (48, 72), (47, 61), (46, 70), (57, 41), (20, 30)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 1 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(41, 51)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0987.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(48, 52), (65, 59), (72, 62), (24, 32), (60, 38), (57, 34), (16, 20), (56, 49), (67, 58)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 12 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(51, 51), (56, 37), (47, 61), (50, 80), (48, 72), (68, 56), (72, 52), (68, 68), (49, 92), (45, 91), (23, 35), (21, 16)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 10 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 51), (47, 62), (51, 59), (47, 67), (53, 60), (50, 40), (48, 62), (49, 68), (68, 76), (48, 66)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 11 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 55), (37, 44), (20, 46), (36, 60), (05, 41), (16, 50), (36, 55), (29, 47), (72, 69), (62, 56), (71, 91)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0986.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 9 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(49, 53), (55, 48), (46, 67), (50, 63), (47, 72), (48, 76), (52, 75), (64, 54), (68, 53)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 10 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(51, 57), (52, 59), (56, 58), (48, 67), (50, 28), (51, 37), (69, 71), (69, 77), (48, 62), (54, 59)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0985.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 10 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(55, 49), (53, 55), (47, 58), (58, 63), (81, 36), (83, 28), (85, 53), (42, 56), (39, 53), (23, 57)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0989.jpg"
+    ]
+  },
+  {
+    "conversations": [
+      {
+        "from": "human",
+        "value": "<image>Analyze this image and predict a human eye movement scanpath during free viewing for 3 seconds.\nA scanpath is the temporal sequence of fixation points showing where a person looks over time.\nConsider visual saliency, semantic importance, and how attention naturally flows across a scene.\n\nGenerate a scanpath of exactly 6 fixation points in temporal order as a list of tuples: (x, y)\n- x: horizontal position (0-100, 0=left, 100=right)\n- y: vertical position (0-100, 0=top, 100=bottom)\n- Points should be ordered from first fixation to last fixation.\n\nOutput ONLY a Python list of tuples:\n[(51,46),(38,28),...]"
+      },
+      {
+        "from": "gpt",
+        "value": "[(50, 42), (60, 30), (74, 52), (68, 61), (46, 59), (49, 69)]"
+      }
+    ],
+    "images": [
+      "images/MIT_0988.jpg"
+    ]
+  }
+]
