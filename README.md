@@ -69,6 +69,104 @@ internvl3_5_8b_combined_release/
 
    Results are written to `eval_output/`.
 
+## Running evaluations
+
+`run_eval.sh` is a thin wrapper around `evaluate_vllm_unified.py`. To customise
+a run, call the script directly:
+
+```bash
+python evaluate_vllm_unified.py \
+    --base-model OpenGVLab/InternVL3_5-8B-HF \
+    --adapter-path model/combined_adapter \
+    --val-json data/sample_MIT.json \
+    --images-dir data \
+    --pkl-dir data/centerbias \
+    --output-dir eval_output \
+    --metric-mode assume_normalized --normalize-digits \
+    --batch-size 64 --max-num-seqs 32 --max-model-len 4096 \
+    --gpu-memory-utilization 0.90 \
+    --skip-viz
+```
+
+On the first run the base model is downloaded from HuggingFace and the LoRA
+adapter is merged into `model/combined_adapter_merged/` (reused on later runs).
+A GPU is required.
+
+### Metric modes
+
+Two scoring modes are available via `--metric-mode`:
+
+- **`assume_normalized`** (default, fast) — scores only the ground-truth
+  coordinate of each fixation by probing its digits, assuming the per-digit
+  distributions are already normalised (`log Z = 0`). Use together with
+  `--normalize-digits`. Reports per-fixation Information Gain (IG) and
+  log-likelihood (LL). Recommended default.
+- **`grid`** — builds the full 100×100 next-fixation probability grid for every
+  transition and normalises over it. Slower (many more forward passes) but also
+  yields AUC and NSS alongside IG/LL, and can dump the grids with `--save-grids`.
+
+For this model the two modes yield essentially identical IG/LL.
+
+### Key options
+
+| Flag | Meaning |
+|------|---------|
+| `--metric-mode {assume_normalized,grid}` | Scoring mode (default `assume_normalized`). |
+| `--normalize-digits` / `--no-normalize-digits` | Renormalise each digit distribution over 0–9 (on by default). |
+| `--base-model` | HuggingFace base model (`OpenGVLab/InternVL3_5-8B-HF`). |
+| `--adapter-path` | LoRA adapter directory (merged into `*_merged/` on first use). |
+| `--val-json` | Evaluation set in LlamaFactory format (see below). |
+| `--images-dir` | Base directory that image paths in the JSON resolve against. |
+| `--pkl-dir` | Center-bias priors (the IG baseline); omit to fall back to a synthetic Gaussian center bias. |
+| `--output-dir` | Where the results JSON is written. |
+| `--max-samples N` | Evaluate only the first N entries (quick checks). |
+| `--batch-size` / `--max-num-seqs` / `--max-model-len` | vLLM throughput / context knobs. |
+| `--gpu-memory-utilization` | vLLM GPU memory fraction. |
+| `--skip-viz` | Skip per-sample visualisation output. |
+| `--seed` | RNG seed. |
+
+Run `python evaluate_vllm_unified.py --help` for the complete list.
+
+### Evaluating on your own data
+
+Pass a `--val-json` in LlamaFactory format — a list of entries, each with an
+image and a human/assistant turn pair:
+
+```json
+[
+  {
+    "images": ["images/MIT_0987.jpg"],
+    "conversations": [
+      {"from": "human", "value": "<image>Analyze this image and predict a human eye movement scanpath ..."},
+      {"from": "gpt",   "value": "[(53, 48), (72, 32), (38, 54)]"}
+    ]
+  }
+]
+```
+
+- Coordinates are integers on a **0–99 grid** (the image is treated as 100×100),
+  written as `(x, y)` with `x` = column, `y` = row. The `gpt` turn holds the
+  ground-truth scanpath the model is scored against.
+- Image paths resolve relative to `--images-dir` (so `images/MIT_0987.jpg` with
+  `--images-dir data` reads `data/images/MIT_0987.jpg`).
+- Center-bias priors are looked up at `<pkl-dir>/<DATASET>/<index>.pkl` derived
+  from the image name `DATASET_index.jpg` (e.g. `MIT_0987.jpg` →
+  `data/centerbias/MIT/0987.pkl`). Each pickle is a dict
+  `{"centerbias": <2-D log-density array>}`. If a prior is missing, a synthetic
+  Gaussian center bias is used instead.
+
+### Output
+
+Results are written to `<output-dir>/unified_<mode>_0shot_<timestamp>.json`. The
+`results` list has one entry per evaluated sample, with the ground-truth
+fixations and per-fixation scores:
+
+- `lp_mean_ig`, `lp_fixation_igs` — mean and per-fixation Information Gain (bits).
+- `lp_mean_ll`, `lp_fixation_lls` — mean and per-fixation log-likelihood.
+- In `grid` mode, AUC and NSS are additionally reported per fixation.
+
+Aggregate IG/LL across the set are printed to stdout at the end of the run.
+
 ## Metric note
 
 The default evaluation runs with `--metric-mode assume_normalized` and
