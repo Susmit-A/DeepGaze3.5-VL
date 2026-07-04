@@ -30,8 +30,7 @@ bundled here.
 - `configs/internvl3_5_8b_combined.yaml`, `configs/internvl3_5_8b_visual_search.yaml`
   — the LoRA SFT training configurations for the two models.
 - `model/combined_adapter/` — the inference-only free-viewing LoRA adapter
-  (rank 32; weights + tokenizer / processor config). Training-only files
-  (optimizer, scheduler, RNG state, trainer state) are intentionally excluded.
+  (rank 32; weights + tokenizer / processor config).
 - `model/visual_search_adapter/` — the inference-only visual-search LoRA
   adapter (rank 8, COCO-Search18).
 - `data/sample_MIT.json` — 75 validation entries (all subjects) for 5 MIT
