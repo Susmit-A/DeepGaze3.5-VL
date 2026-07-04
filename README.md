@@ -1,5 +1,7 @@
 # InternVL3.5-8B Combined Scanpath Model
 
+📄 **Paper:** https://arxiv.org/abs/2607.02083
+
 A rank-32 LoRA adapter on top of `OpenGVLab/InternVL3_5-8B-HF`, fine-tuned to
 predict human free-viewing scanpaths as coordinate sequences on a 100x100 grid.
 Given an image, the model emits a sequence of fixation coordinates that
