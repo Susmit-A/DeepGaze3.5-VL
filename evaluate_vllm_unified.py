@@ -51,10 +51,6 @@ from tqdm import tqdm
 matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
-# HuggingFace login for gated models (optional):
-#   export HF_TOKEN=<your token>   # picked up automatically from the environment
-# Never hardcode access tokens in source.
-
 
 # =============================================================================
 # Coordinate Formatting (separate-digits only)
