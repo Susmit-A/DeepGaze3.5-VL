@@ -80,7 +80,7 @@ Visual search (3 fixations by default, uses `model/visual_search_adapter`) —
 pass the target object:
 
 ```bash
-python predict_scanpath.py --image path/to/image.jpg --mode search --target toilet
+python predict_scanpath.py --image path/to/office.jpg --mode search --target laptop
 ```
 
 The scanpath is printed both on the model's 0–100 grid and in pixel
