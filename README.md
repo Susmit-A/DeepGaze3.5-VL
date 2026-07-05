@@ -32,6 +32,7 @@ internvl3_5_8b_combined_release/
 ├── LICENSE
 ├── requirements.txt
 ├── run_eval.sh
+├── predict_scanpath.py                    # image -> scanpath inference
 ├── evaluate_vllm_unified.py               # evaluation / scoring script
 ├── configs/
 │   ├── internvl3_5_8b_combined.yaml        # free-viewing LoRA SFT config
@@ -63,6 +64,31 @@ internvl3_5_8b_combined_release/
    ```
 
    Results are written to `eval_output/`.
+
+## Predict a scanpath
+
+`predict_scanpath.py` runs a single image through the model and prints the
+predicted scanpath — no ground truth or metrics needed.
+
+Free viewing (8 fixations by default, uses `model/combined_adapter`):
+
+```bash
+python predict_scanpath.py --image path/to/image.jpg
+```
+
+Visual search (3 fixations by default, uses `model/visual_search_adapter`) —
+pass the target object:
+
+```bash
+python predict_scanpath.py --image path/to/image.jpg --mode search --target toilet
+```
+
+The scanpath is printed both on the model's 0–100 grid and in pixel
+coordinates. Use `--num-fixations N` to change the length, `--output out.json`
+to save the result, and `--save-overlay overlay.png` to render the scanpath on
+the image. The visual-search model was trained on the 18 COCO-Search18 targets:
+bottle, bowl, car, chair, clock, cup, fork, keyboard, knife, laptop, microwave,
+mouse, oven, potted plant, sink, stop sign, toilet, tv.
 
 ## Running evaluations
 
