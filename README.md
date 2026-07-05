@@ -1,4 +1,4 @@
-# InternVL3.5-8B Combined Scanpath Model
+# [ECCV 2026] InternVL3.5-8B Combined Scanpath Model
 
 📄 **Paper:** https://arxiv.org/abs/2607.02083
 
